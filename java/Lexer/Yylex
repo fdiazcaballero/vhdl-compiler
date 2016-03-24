@@ -1,0 +1,55 @@
+package Lexer;
+
+import Parser.sym;
+
+%%
+%{
+private java_cup.runtime.Symbol tok(int k, Object value) {
+  return new java_cup.runtime.Symbol(k, yyline, 0, value); 
+}
+%}
+
+%public
+%cup
+%line
+%eofval{
+{return tok(sym.EOF, null); }
+%eofval}
+
+letra= [a-zA-Z]
+
+
+%%
+
+"<="			{System.out.println("asop");return tok(sym.ASOP, null); }
+"("			{System.out.println("paren");return tok(sym.PAREN, null);}
+")"			{System.out.println("tesis");return tok(sym.TESIS, null);}
+":"			{System.out.println("dospuntos");return tok(sym.DOSPUNTOS, null);}
+";"			{System.out.println("puntocoma");return tok(sym.PUNTOCOMA, null);}
+","			{System.out.println("coma");return tok(sym.COMA, null);}
+"_"			{System.out.println("subraya");return tok(sym.SUBRAYA, null);}
+"'"			{System.out.println("apost");return tok(sym.APOST, null);}
+entity			{System.out.println("entity");return tok(sym.ENTITY, null);}
+architecture		{System.out.println("architecture");return tok(sym.ARCHITECTURE, null);}
+is			{System.out.println("is");return tok(sym.IS, null);}
+begin			{System.out.println("begin");return tok(sym.BEGIN, null);}
+end			{System.out.println("end");return tok(sym.END, null);}
+of			{System.out.println("of"); return tok(sym.OF, null);}
+port			{System.out.println("port");return tok(sym.PORT, null);}
+and			{System.out.println("and");return tok(sym.AND, null);}
+or			{System.out.println("or");return tok(sym.OR, null);}
+xor			{System.out.println("xor");return tok(sym.XOR, null);}
+nand			{System.out.println("nand");return tok(sym.NAND, null);}
+nor			{System.out.println("nor");return tok(sym.NOR, null);}
+not			{System.out.println("not");return tok(sym.NOT, null);}
+ns			{System.out.println("nanoseg");return tok(sym.NANOSEG, null);}
+after			{System.out.println("after");return tok(sym.AFTER, null);}
+bit			{System.out.println("bit");return tok(sym.BIT, null);}
+transport			{System.out.println("transport");return tok(sym.TRANSPORT, null);}
+signal			{System.out.println("signal");return tok(sym.SIGNAL, null);}
+in			{System.out.println("in"); return tok(sym.IN, null);}
+out			{System.out.println("out"); return tok(sym.OUT, null);}
+[0-9]+			{System.out.println("cent");return tok(sym.CENT, new Integer(yytext())); }
+{letra}({letra}|[0-9]|"_")*  {System.out.println("identificador");return tok(sym.IDENT, yytext());}
+(" "|\n|\t|\r)+	{ }
+.		{ System.out.println("Caracter Ilegal en linea" + yyline);}

@@ -1,0 +1,78 @@
+package Parser;
+
+import java_cup.runtime.*;
+
+parser code {:
+public void syntax_error(Symbol s) {
+  report_error("Error de sintaxis en linea " + s.left, null);
+}
+
+public void unrecovered_syntax_error(Symbol s) throws
+  java.lang.Exception {
+  report_fatal_error("", null);
+}
+:};
+
+terminal ASOP, PAREN, TESIS, DOSPUNTOS, PUNTOCOMA, COMA, SUBRAYA, APOST,
+	ENTITY, ARCHICT, IS, BEGIN, END, PORT, AND, OR, XOR, NAND, NOR, NOT, NANOSEG, UNO,
+	CERO, AFTER, BIT, STRUCT, TRANSPORT, SIGNA, IN, OUT, ARCHITECTURE, OF, SIGNAL, LETRA, DIGITO; 
+
+
+terminal Integer CENT;
+terminal String IDENT;
+
+non terminal Desig_unit;
+non terminal Entity_declaration, Architecture_body;
+non terminal Port_clause, Interface_list, Interface_element;
+non terminal Mode;
+non terminal Identifier_list;
+non terminal Signal_declaration;
+non terminal Architecture_statement_part, Current_stament; 
+non terminal Concurrent_statement;
+non terminal CLog;
+non terminal Expr;
+precedence left AND, OR, NOT, XOR, NAND, NOR;
+precedence left NOT;
+
+start with Desig_unit;
+
+
+Desig_unit ::= Entity_declaration Architecture_body;				
+
+Entity_declaration ::= ENTITY IDENT IS Port_clause END PUNTOCOMA;
+
+Port_clause ::= PORT PAREN Interface_list TESIS PUNTOCOMA;
+
+Interface_list ::= Interface_element
+		| Interface_element PUNTOCOMA Interface_list ;
+
+Interface_element ::= Identifier_list DOSPUNTOS  Mode BIT ;
+
+Mode ::= IN | OUT ;
+
+Identifier_list ::= IDENT
+		| IDENT COMA Identifier_list ;
+
+Architecture_body ::= ARCHITECTURE IDENT OF  IDENT IS Signal_declaration
+		  BEGIN Architecture_statement_part END PUNTOCOMA
+		  | ARCHITECTURE IDENT OF  IDENT IS 
+		  BEGIN Architecture_statement_part END PUNTOCOMA;
+
+Signal_declaration ::= SIGNAL Identifier_list DOSPUNTOS BIT PUNTOCOMA ;
+
+Architecture_statement_part ::= Concurrent_statement
+                  | Concurrent_statement Architecture_statement_part ;
+
+Concurrent_statement ::= IDENT ASOP TRANSPORT Expr AFTER CENT NANOSEG PUNTOCOMA ;
+
+Expr ::= Expr AND Expr
+       | Expr OR Expr
+       | Expr XOR Expr
+       | Expr NOR Expr
+       | Expr NAND Expr
+       | PAREN Expr TESIS
+       | NOT Expr
+       | IDENT
+       | CLog ;
+
+CLog ::= UNO | CERO ;
